@@ -61,11 +61,23 @@ if [ -f "feeds.conf.default" ]; then
     echo "src-link packages ./feeds/packages" >> feeds.conf.default
 fi
 
-# 更新 feeds
-./scripts/feeds update -a
-./scripts/feeds install -a
+# 添加 NSS 相关 feeds
+echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
+echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
 
-# 强制安装本地 minieap
+# 更新 feeds（排除可能冲突的包）
+./scripts/feeds update -a
+./scripts/feeds install -a -p luci
+./scripts/feeds install -a -p routing
+./scripts/feeds install -a -p telephony
+./scripts/feeds install -a -p video
+./scripts/feeds install -a -p nss_packages
+./scripts/feeds install -a -p sqm_scripts_nss
+
+# 排除默认的 minieap 包，确保使用 SYSU 版本
+./scripts/feeds install -a -p packages -d minieap
+
+# 强制安装本地 SYSU minieap
 ./scripts/feeds install -f minieap
 
 echo "SYSU minieap 配置完成！"
