@@ -59,11 +59,15 @@ ln -sf ../../../package/minieap feeds/packages/net/minieap
 if [ -f "feeds.conf.default" ]; then
     sed -i '/^src-git packages/d' feeds.conf.default
     echo "src-link packages ./feeds/packages" >> feeds.conf.default
+    
+    # 添加 NSS 相关 feeds（避免重复）
+    if ! grep -q "nss_packages" feeds.conf.default; then
+        echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
+    fi
+    if ! grep -q "sqm_scripts_nss" feeds.conf.default; then
+        echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
+    fi
 fi
-
-# 添加 NSS 相关 feeds
-echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
-echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
 
 # 更新 feeds（排除可能冲突的包）
 ./scripts/feeds update -a
