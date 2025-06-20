@@ -101,6 +101,13 @@ jobs:
         rm -rf package/new/custom
         ./scripts/feeds install -a
 
+    - name: Clean Feeds Cache(清理feeds缓存)
+      run: |
+        cd $OPENWRT_PATH
+        rm -rf tmp
+        rm -rf feeds.conf.default
+        ./scripts/feeds clean
+
     - name: Run DIY Script(运行自定义脚本)
       run: |
         cd $OPENWRT_PATH
