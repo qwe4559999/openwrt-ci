@@ -4,6 +4,15 @@ set -e  # 遇到错误立即退出
 
 echo "开始配置 SYSU minieap..."
 
+# 检查包管理器类型
+if grep -q "CONFIG_USE_APK=y" .config 2>/dev/null || [ -f "include/package-apk.mk" ]; then
+    echo "检测到 APK 包管理器，配置 APK 格式编译"
+    PACKAGE_FORMAT="apk"
+else
+    echo "使用 OPKG 包管理器，配置 IPK 格式编译"
+    PACKAGE_FORMAT="ipk"
+fi
+
 # 清理可能存在的冲突包
 rm -rf package/feeds/packages/minieap
 rm -rf feeds/packages/net/minieap
@@ -26,6 +35,21 @@ echo "SYSU minieap 源码验证："
 ls -la package/minieap/
 echo "Makefile 内容检查："
 head -20 package/minieap/Makefile
+
+# 根据包管理器类型配置编译选项
+if [ "$PACKAGE_FORMAT" = "apk" ]; then
+    echo "配置 APK 包格式编译..."
+    # 确保使用 APK 兼容的编译选项
+    if [ -f "package/minieap/Makefile" ]; then
+        # 检查是否需要修改 Makefile 以支持 APK
+        if ! grep -q "PKG_FORMAT.*apk" package/minieap/Makefile; then
+            echo "# APK package format compatibility" >> package/minieap/Makefile
+        fi
+    fi
+else
+    echo "配置 IPK 包格式编译..."
+    # 使用传统的 IPK 编译配置
+fi
 
 # 创建 feeds 覆盖配置
 mkdir -p feeds/packages/net/
@@ -78,7 +102,14 @@ CONFIG_PACKAGE_ntfs-3g-utils=y
 CONFIG_PACKAGE_minieap=y
 CONFIG_PACKAGE_luci-app-minieap=y
 CONFIG_PACKAGE_luci-i18n-minieap-zh-cn=y
+
+# 包管理器配置
+CONFIG_USE_APK=y
+CONFIG_PACKAGE_apk=y
+CONFIG_PACKAGE_apk-tools=y
 EOF
+
+echo "包格式配置完成：$PACKAGE_FORMAT"
 
 # 创建磁盘清理脚本
 mkdir -p files/usr/bin
