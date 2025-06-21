@@ -55,19 +55,17 @@ fi
 mkdir -p feeds/packages/net/
 ln -sf ../../../package/minieap feeds/packages/net/minieap
 
-# 强制清理并重建 feeds.conf.default
-if [ -f "feeds.conf.default" ]; then
-    mv feeds.conf.default feeds.conf.default.bak
-fi
-
-if [ -f "feeds.conf.default.sample" ]; then
-    cp feeds.conf.default.sample feeds.conf.default
+# 使用项目中的 6.12 feeds 配置
+if [ -f "feeds/6.12.txt" ]; then
+    cp feeds/6.12.txt feeds.conf.default
+    echo "使用项目中的 6.12 feeds 配置"
 else
-    # 如果 sample 文件不存在，则创建一个基础的 feeds.conf.default
-    echo "src-git packages https://git.openwrt.org/feed/packages.git" > feeds.conf.default
-    echo "src-git luci https://git.openwrt.org/project/luci.git" >> feeds.conf.default
+    # 如果项目配置不存在，则创建基础配置
+    echo "src-git packages https://github.com/immortalwrt/packages.git" > feeds.conf.default
+    echo "src-git luci https://github.com/immortalwrt/luci.git" >> feeds.conf.default
     echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
     echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
+    echo "src-git video https://github.com/openwrt/video.git" >> feeds.conf.default
 fi
 
 # 添加自定义 feeds
