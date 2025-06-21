@@ -55,19 +55,38 @@ fi
 mkdir -p feeds/packages/net/
 ln -sf ../../../package/minieap feeds/packages/net/minieap
 
-# 创建完整的 feeds 配置
-echo "src-git packages https://github.com/immortalwrt/packages.git" > feeds.conf.default
-echo "src-git luci https://github.com/immortalwrt/luci.git" >> feeds.conf.default
-echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
-echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
-echo "src-git video https://github.com/openwrt/video.git" >> feeds.conf.default
-echo "创建完整的 feeds 配置文件"
+# 确保 feeds.conf.default 存在并且格式正确
+if [ ! -f "feeds.conf.default" ]; then
+    echo "feeds.conf.default 不存在，创建新的配置文件"
+    # 创建完整的 feeds 配置
+    echo "src-git packages https://github.com/immortalwrt/packages.git" > feeds.conf.default
+    echo "src-git luci https://github.com/immortalwrt/luci.git" >> feeds.conf.default
+    echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
+    echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
+    echo "src-git video https://github.com/openwrt/video.git" >> feeds.conf.default
+    
+    # 添加自定义 feeds
+    echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
+    echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
+    
+    echo "已创建完整的 feeds 配置文件"
+else
+    echo "feeds.conf.default 已存在，检查并添加自定义 feeds"
+    # 检查并添加 NSS feeds（如果不存在）
+    if ! grep -q "nss_packages" feeds.conf.default; then
+        echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
+    fi
+    if ! grep -q "sqm_scripts_nss" feeds.conf.default; then
+        echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
+    fi
+fi
 
-# 添加自定义 feeds
-echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
-echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
+# 显示 feeds 配置内容用于调试
+echo "当前 feeds.conf.default 内容："
+cat feeds.conf.default
 
 # 更新 feeds（排除可能冲突的包）
+echo "开始更新 feeds..."
 ./scripts/feeds update -a
 ./scripts/feeds install -a -p luci
 ./scripts/feeds install -a -p routing
