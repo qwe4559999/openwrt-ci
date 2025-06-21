@@ -55,18 +55,13 @@ fi
 mkdir -p feeds/packages/net/
 ln -sf ../../../package/minieap feeds/packages/net/minieap
 
-# 使用项目中的 6.12 feeds 配置
-if [ -f "feeds/6.12.txt" ]; then
-    cp feeds/6.12.txt feeds.conf.default
-    echo "使用项目中的 6.12 feeds 配置"
-else
-    # 如果项目配置不存在，则创建基础配置
-    echo "src-git packages https://github.com/immortalwrt/packages.git" > feeds.conf.default
-    echo "src-git luci https://github.com/immortalwrt/luci.git" >> feeds.conf.default
-    echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
-    echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
-    echo "src-git video https://github.com/openwrt/video.git" >> feeds.conf.default
-fi
+# 创建完整的 feeds 配置
+echo "src-git packages https://github.com/immortalwrt/packages.git" > feeds.conf.default
+echo "src-git luci https://github.com/immortalwrt/luci.git" >> feeds.conf.default
+echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
+echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
+echo "src-git video https://github.com/openwrt/video.git" >> feeds.conf.default
+echo "创建完整的 feeds 配置文件"
 
 # 添加自定义 feeds
 echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
