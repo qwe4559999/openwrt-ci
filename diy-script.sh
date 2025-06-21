@@ -64,14 +64,13 @@ if [ -f "feeds.conf.default.sample" ]; then
     cp feeds.conf.default.sample feeds.conf.default
 else
     # 如果 sample 文件不存在，则创建一个基础的 feeds.conf.default
-    echo "src-git-full packages https://git.openwrt.org/feed/packages.git;openwrt-23.05" > feeds.conf.default
-    echo "src-git-full luci https://git.openwrt.org/project/luci.git;openwrt-23.05" >> feeds.conf.default
-    echo "src-git-full routing https://git.openwrt.org/feed/routing.git;openwrt-23.05" >> feeds.conf.default
-    echo "src-git-full telephony https://git.openwrt.org/feed/telephony.git;openwrt-23.05" >> feeds.conf.default
+    echo "src-git packages https://git.openwrt.org/feed/packages.git" > feeds.conf.default
+    echo "src-git luci https://git.openwrt.org/project/luci.git" >> feeds.conf.default
+    echo "src-git routing https://git.openwrt.org/feed/routing.git" >> feeds.conf.default
+    echo "src-git telephony https://git.openwrt.org/feed/telephony.git" >> feeds.conf.default
 fi
 
 # 添加自定义 feeds
-echo "src-link packages ./feeds/packages" >> feeds.conf.default
 echo "src-git nss_packages https://github.com/LiBwrt/nss-packages.git" >> feeds.conf.default
 echo "src-git sqm_scripts_nss https://github.com/rickkdotnet/sqm-scripts-nss.git" >> feeds.conf.default
 
