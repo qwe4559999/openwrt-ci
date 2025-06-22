@@ -44,6 +44,7 @@ build_firmware() {
   cd openwrt
 
   cp ${GITHUB_WORKSPACE}/configs/${BUILD_PROFILE}.config .config
+  make defconfig
   make -j$(($(nproc) + 1)) V=e || make -j1 V=sc || exit 1
 
   cd -
