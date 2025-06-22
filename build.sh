@@ -1,6 +1,10 @@
 #!/bin/sh
 # shellcheck disable=SC2086,SC3043,SC2164,SC2103,SC2046,SC2155
 
+BUILD_REPO=${BUILD_REPO:-https://github.com/openwrt/openwrt.git}
+GITHUB_REF_NAME=${GITHUB_REF_NAME:-master}
+GITHUB_WORKSPACE=${GITHUB_WORKSPACE:-$(pwd)}
+
 get_sources() {
   # the checkout actions will set $HOME to other directory,
   # we need to reset some necessary git configs again.
@@ -39,7 +43,7 @@ apply_patches() {
 build_firmware() {
   cd openwrt
 
-  cp ${GITHUB_WORKSPACE}/configs/${BUILD_PROFILE} .config
+  cp ${GITHUB_WORKSPACE}/configs/${BUILD_PROFILE}.config .config
   make -j$(($(nproc) + 1)) V=e || make -j1 V=sc || exit 1
 
   cd -
